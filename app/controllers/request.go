@@ -3,6 +3,7 @@ package controllers
 import (
 	"bytes"
 	"fmt"
+	"strings"
 )
 
 type VerbType string
@@ -17,10 +18,15 @@ type Request struct {
 	Version string
 	Path    string
 	headers map[string]string
+	params  []string
 }
 
 func (r Request) GetKey() string {
 	return fmt.Sprintf("%v+%v", r.Verb, r.Path)
+}
+
+func (r Request) GetPathSlices() []string {
+	return strings.Split(r.Path, "/")
 }
 
 func NewRequest(payload []byte) Request {
