@@ -1,4 +1,4 @@
-package controllers
+package request
 
 import (
 	"bytes"
@@ -17,8 +17,8 @@ type Request struct {
 	Verb    VerbType
 	Version string
 	Path    string
-	headers map[string]string
-	params  []string
+	Headers map[string]string
+	Params  map[string]string
 }
 
 func (r Request) GetKey() string {
@@ -39,7 +39,8 @@ func NewRequest(payload []byte) Request {
 		Verb:    VerbType(verb),
 		Version: version,
 		Path:    path,
-		headers: nil,
+		Headers: nil,
+		Params:  map[string]string{},
 	}
 
 	fmt.Println(req.Verb)

@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/codecrafters-io/http-server-starter-go/app/controllers"
 	"github.com/codecrafters-io/http-server-starter-go/app/http"
+	"github.com/codecrafters-io/http-server-starter-go/app/http/request"
 	"net"
 	"os"
 )
@@ -37,7 +37,7 @@ func main() {
 	payload := make([]byte, bytes_readed)
 	copy(payload, buffer)
 
-	req := controllers.NewRequest(payload)
+	req := request.NewRequest(payload)
 
 	res := http.ProcessRequest(req)
 

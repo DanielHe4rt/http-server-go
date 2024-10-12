@@ -1,51 +1,9 @@
-package controllers
+package request
 
 import (
 	"reflect"
 	"testing"
 )
-
-func TestHomeController_Handle(t *testing.T) {
-	type fields struct {
-		Req Request
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{
-			"Simple 200 response",
-			fields{Req: Request{
-				Verb:    "GET",
-				Version: "HTTP 1.1",
-				Path:    "/",
-				headers: nil,
-			}},
-			"HTTP/1.1 200 OK\r\n\r\n",
-		},
-		{
-			"Not Found 404 response",
-			fields{Req: Request{
-				Verb:    "GET",
-				Version: "HTTP 1.1",
-				Path:    "/fodase",
-				headers: nil,
-			}},
-			"HTTP/1.1 200 OK\r\n\r\n",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := HomeController{
-				Req: tt.fields.Req,
-			}
-			if got := c.Handle(); got != tt.want {
-				t.Errorf("Handle() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
 func TestNewRequest(t *testing.T) {
 	type args struct {
@@ -65,7 +23,7 @@ func TestNewRequest(t *testing.T) {
 				Verb:    VerbGet,
 				Version: "HTTP/1.1",
 				Path:    "/index.html",
-				headers: nil,
+				Headers: nil,
 			},
 		},
 	}
@@ -98,7 +56,7 @@ func TestRequest_GetKey(t *testing.T) {
 				Verb:    tt.fields.Verb,
 				Version: tt.fields.Version,
 				Path:    tt.fields.Path,
-				headers: tt.fields.headers,
+				Headers: tt.fields.headers,
 			}
 			if got := r.GetKey(); got != tt.want {
 				t.Errorf("GetKey() = %v, want %v", got, tt.want)
