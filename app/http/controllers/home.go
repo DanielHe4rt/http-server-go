@@ -8,5 +8,5 @@ import (
 type HomeController struct{}
 
 func (c HomeController) Handle(_ request.Request, response response.Response) string {
-	return response.Text("Salve fdp").Success().Build()
+	return response.Success().Build()
 }

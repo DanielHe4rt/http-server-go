@@ -46,7 +46,10 @@ func (res *Response) Build() string {
 	}
 	// End of Headers
 	response += "\r\n"
-	response += res.body
+	if len(res.body) > 0 {
+		response += res.body
+	}
+
 	fmt.Printf("Payload: %v\n", response)
 	return response
 }
