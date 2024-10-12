@@ -3,6 +3,7 @@ package response
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 )
 
@@ -28,6 +29,25 @@ func (res *Response) Success() *Response {
 
 	return res
 }
+func (res *Response) Download(filePath string, fileName string) *Response {
+
+	fmt.Println(filePath + fileName)
+	// Validate File Existence
+	absolutePath := fmt.Sprintf("%v%v", filePath, fileName)
+	fileInfo, fileStatus := os.ReadFile(absolutePath)
+	if fileStatus != nil {
+		res.body = ""
+		return res.NotFound()
+	}
+
+	// Populate Response
+	res.headers = make(map[string]string)
+	res.headers["Content-Type"] = "application/octet-stream"
+	res.headers["Content-Length"] = strconv.Itoa(len(fileInfo))
+	res.body = string(fileInfo)
+
+	return res.Success()
+}
 
 func (res *Response) NotFound() *Response {
 	res.status = http.StatusNotFound
@@ -42,6 +62,7 @@ func (res *Response) Build() string {
 	response += fmt.Sprintf("%v %v %v\r\n", "HTTP/1.1", res.status, res.statusText)
 
 	for header, value := range res.headers {
+		fmt.Println("HEADER HEADER")
 		response += fmt.Sprintf("%v: %v\r\n", header, value)
 	}
 	// End of Headers

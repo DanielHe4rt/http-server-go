@@ -27,6 +27,7 @@ func availableRoutes() map[string]string {
 	router["GET+/echo/danielhe4rt"] = "MeController"
 	router["GET+/echo/{message}"] = "EchoController"
 	router["GET+/user-agent"] = "UserAgentController"
+	router["GET+/files/{fileName}"] = "FilesController"
 
 	return router
 }
@@ -41,6 +42,8 @@ func getRouteAction(controller string) controllers.BaseController {
 		return controllers.EchoController{}
 	case "UserAgentController":
 		return controllers.UserAgentController{}
+	case "FilesController":
+		return controllers.FilesController{}
 	default:
 		return controllers.NotFoundController{}
 	}
@@ -57,11 +60,11 @@ func getController(r request.Request) (string, request.Request) {
 		fmt.Println("------------------")
 		availableRoute := strings.Split(route, "+")
 		availablePath := availableRoute[1]
-		fmt.Printf("Route: %v\n", availablePath)
+		//fmt.Printf("Route: %v\n", availablePath)
 		availablePathStructure := strings.Split(availablePath, "/")
 
 		if len(availablePathStructure) != len(currentRequestPathStructure) {
-			fmt.Printf("Route '%v' doesnt match %v != %v\n", availablePath, len(availablePathStructure), len(currentRequestPathStructure))
+			//fmt.Printf("Route '%v' doesnt match %v != %v\n", availablePath, len(availablePathStructure), len(currentRequestPathStructure))
 			continue
 		}
 
@@ -72,17 +75,17 @@ func getController(r request.Request) (string, request.Request) {
 			}
 
 			fmt.Println(pathItem)
-			fmt.Printf("Matching router: [%v] with Req: [%v]\n", pathItem, currentRequestPathStructure[idx])
+			//fmt.Printf("Matching router: [%v] with Req: [%v]\n", pathItem, currentRequestPathStructure[idx])
 
 			hasVariable, err := regexp.MatchString("{(.*)}", pathItem)
 
 			if err != nil {
-				fmt.Printf("Regex Error: %v\n", err.Error())
+				//fmt.Printf("Regex Error: %v\n", err.Error())
 				continue
 			}
 
 			if hasVariable {
-				fmt.Printf("Found Regex: %v\n", hasVariable)
+				//fmt.Printf("Found Regex: %v\n", hasVariable)
 				routerPathCounter++
 				pathKey := pathItem[1 : len(pathItem)-1]
 				fmt.Println(pathKey, currentRequestPathStructure[idx])
@@ -90,7 +93,7 @@ func getController(r request.Request) (string, request.Request) {
 				r.Params[pathKey] = currentRequestPathStructure[idx]
 			}
 
-			fmt.Printf("Arguments Counter: %v\n", routerPathCounter)
+			//fmt.Printf("Arguments Counter: %v\n", routerPathCounter)
 		}
 
 		if routerPathCounter == len(availablePathStructure) {
