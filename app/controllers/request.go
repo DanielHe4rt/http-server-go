@@ -23,18 +23,22 @@ func (r Request) GetKey() string {
 	return fmt.Sprintf("%v+%v", r.Verb, r.Path)
 }
 
-func NewRequest(payload [][]byte) Request {
+func NewRequest(payload []byte) Request {
 
-	verb, path, version := extractRequestLine(payload[0])
-	for i := range payload {
-		fmt.Printf("Content Parsed: %v \n", string(payload[i]))
-	}
+	payloadSlices := bytes.Split(payload, []byte("\r\n"))
+
+	verb, path, version := extractRequestLine(payloadSlices[0])
+
 	req := Request{
 		Verb:    VerbType(verb),
 		Version: version,
 		Path:    path,
 		headers: nil,
 	}
+
+	fmt.Println(req.Verb)
+	fmt.Println(req.Path)
+	fmt.Println(req.Version)
 
 	return req
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/codecrafters-io/http-server-starter-go/app/controllers"
 	"github.com/codecrafters-io/http-server-starter-go/app/http"
@@ -38,9 +37,7 @@ func main() {
 	payload := make([]byte, bytes_readed)
 	copy(payload, buffer)
 
-	content := bytes.Split(payload, []byte("\r\n"))
-
-	req := controllers.NewRequest(content)
+	req := controllers.NewRequest(payload)
 
 	res := http.ProcessRequest(req)
 
@@ -48,7 +45,7 @@ func main() {
 	fmt.Printf("Version: %v\n", req.Version)
 	fmt.Printf("Path: %v\n", req.Path)
 
-	fmt.Printf("Content: %v", content)
+	fmt.Printf("Content: %v", payload)
 
 	fmt.Printf("Bytes received: %v\n", bytes_readed)
 
