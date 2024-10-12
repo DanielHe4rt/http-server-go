@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/codecrafters-io/http-server-starter-go/app/controllers"
+	"github.com/codecrafters-io/http-server-starter-go/app/http"
 	"net"
 	"os"
 )
@@ -28,7 +31,28 @@ func main() {
 		os.Exit(1)
 	}
 
-	bytes_sent, err := conn.Write([]byte("HTTP/1.1 200 OK\r\n\r\n"))
+	buffer := make([]byte, 1024)
+
+	bytes_readed, err := conn.Read(buffer)
+
+	payload := make([]byte, bytes_readed)
+	copy(payload, buffer)
+
+	content := bytes.Split(payload, []byte("\r\n"))
+
+	req := controllers.NewRequest(content)
+
+	res := http.ProcessRequest(req)
+
+	fmt.Printf("Verb: %v\n", req.Verb)
+	fmt.Printf("Version: %v\n", req.Version)
+	fmt.Printf("Path: %v\n", req.Path)
+
+	fmt.Printf("Content: %v", content)
+
+	fmt.Printf("Bytes received: %v\n", bytes_readed)
+
+	bytes_sent, err := conn.Write([]byte(res))
 
 	if err != nil {
 		fmt.Println("Error responding client: ", err.Error())
