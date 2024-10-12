@@ -26,6 +26,7 @@ func availableRoutes() map[string]string {
 	router["GET+/"] = "HomeController"
 	router["GET+/echo/danielhe4rt"] = "MeController"
 	router["GET+/echo/{message}"] = "EchoController"
+	router["GET+/user-agent"] = "UserAgentController"
 
 	return router
 }
@@ -38,6 +39,8 @@ func getRouteAction(controller string) controllers.BaseController {
 		return controllers.MeController{}
 	case "EchoController":
 		return controllers.EchoController{}
+	case "UserAgentController":
+		return controllers.UserAgentController{}
 	default:
 		return controllers.NotFoundController{}
 	}

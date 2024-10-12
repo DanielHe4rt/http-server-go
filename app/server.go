@@ -23,37 +23,39 @@ func main() {
 		fmt.Println("Failed to bind to port 4221")
 		os.Exit(1)
 	}
+	for {
 
-	conn, err := l.Accept()
-	if err != nil {
-		fmt.Println("Error accepting connection: ", err.Error())
-		os.Exit(1)
+		conn, err := l.Accept()
+		if err != nil {
+			fmt.Println("Error accepting connection: ", err.Error())
+			os.Exit(1)
+		}
+
+		buffer := make([]byte, 1024)
+
+		bytes_readed, err := conn.Read(buffer)
+
+		payload := make([]byte, bytes_readed)
+		copy(payload, buffer)
+
+		req := request.NewRequest(payload)
+
+		res := http.ProcessRequest(req)
+
+		fmt.Printf("Verb: %v\n", req.Verb)
+		fmt.Printf("Version: %v\n", req.Version)
+		fmt.Printf("Path: %v\n", req.Path)
+
+		fmt.Printf("Content: %v", payload)
+
+		fmt.Printf("Bytes received: %v\n", bytes_readed)
+
+		bytes_sent, err := conn.Write([]byte(res))
+
+		if err != nil {
+			fmt.Println("Error responding client: ", err.Error())
+		}
+
+		fmt.Printf("Bytes sent: %v", bytes_sent)
 	}
-
-	buffer := make([]byte, 1024)
-
-	bytes_readed, err := conn.Read(buffer)
-
-	payload := make([]byte, bytes_readed)
-	copy(payload, buffer)
-
-	req := request.NewRequest(payload)
-
-	res := http.ProcessRequest(req)
-
-	fmt.Printf("Verb: %v\n", req.Verb)
-	fmt.Printf("Version: %v\n", req.Version)
-	fmt.Printf("Path: %v\n", req.Path)
-
-	fmt.Printf("Content: %v", payload)
-
-	fmt.Printf("Bytes received: %v\n", bytes_readed)
-
-	bytes_sent, err := conn.Write([]byte(res))
-
-	if err != nil {
-		fmt.Println("Error responding client: ", err.Error())
-	}
-
-	fmt.Printf("Bytes sent: %v", bytes_sent)
 }

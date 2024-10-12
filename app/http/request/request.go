@@ -34,12 +34,13 @@ func NewRequest(payload []byte) Request {
 	payloadSlices := bytes.Split(payload, []byte("\r\n"))
 
 	verb, path, version := extractRequestLine(payloadSlices[0])
+	headers := extractHeaders(payloadSlices[1 : len(payloadSlices)-2])
 
 	req := Request{
 		Verb:    VerbType(verb),
 		Version: version,
 		Path:    path,
-		Headers: nil,
+		Headers: headers,
 		Params:  map[string]string{},
 	}
 
@@ -48,6 +49,20 @@ func NewRequest(payload []byte) Request {
 	fmt.Println(req.Version)
 
 	return req
+}
+
+func extractHeaders(rawHeaders [][]byte) map[string]string {
+	headers := make(map[string]string)
+
+	for _, headerBytes := range rawHeaders {
+		fmt.Printf("%v\n", string(headerBytes))
+		data := bytes.SplitN(headerBytes, []byte(": "), 2)
+
+		key, value := string(data[0]), string(data[1]) // Accept (?)
+		headers[key] = value
+	}
+
+	return headers
 }
 
 func extractRequestLine(requestLine []byte) (string, string, string) {
