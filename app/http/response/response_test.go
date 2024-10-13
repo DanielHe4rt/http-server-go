@@ -34,6 +34,16 @@ func TestResponse_Build(t *testing.T) {
 			},
 			want: "HTTP/1.1 404 Not Found\r\n\r\n",
 		},
+		{
+			name: "Created new resource",
+			fields: fields{
+				body:       "",
+				status:     201,
+				statusText: "Created",
+				headers:    nil,
+			},
+			want: "HTTP/1.1 201 Created\r\n\r\n",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

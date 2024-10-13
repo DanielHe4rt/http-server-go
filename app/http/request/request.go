@@ -19,6 +19,7 @@ type Request struct {
 	Path    string
 	Headers map[string]string
 	Params  map[string]string
+	Body    string
 }
 
 func (r Request) GetKey() string {
@@ -35,13 +36,14 @@ func NewRequest(payload []byte) Request {
 
 	verb, path, version := extractRequestLine(payloadSlices[0])
 	headers := extractHeaders(payloadSlices[1 : len(payloadSlices)-2])
-
+	body := payloadSlices[len(payloadSlices)-1]
 	req := Request{
 		Verb:    VerbType(verb),
 		Version: version,
 		Path:    path,
 		Headers: headers,
 		Params:  map[string]string{},
+		Body:    string(body),
 	}
 
 	fmt.Println(req.Verb)

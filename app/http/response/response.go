@@ -29,6 +29,21 @@ func (res *Response) Success() *Response {
 
 	return res
 }
+
+func (res *Response) InternalServerError() *Response {
+	res.status = http.StatusInternalServerError
+	res.statusText = "Internal Server Error"
+
+	return res
+}
+
+func (res *Response) Created() *Response {
+	res.status = http.StatusCreated
+	res.statusText = "Created"
+
+	return res
+}
+
 func (res *Response) Download(filePath string, fileName string) *Response {
 
 	fmt.Println(filePath + fileName)
@@ -62,7 +77,6 @@ func (res *Response) Build() string {
 	response += fmt.Sprintf("%v %v %v\r\n", "HTTP/1.1", res.status, res.statusText)
 
 	for header, value := range res.headers {
-		fmt.Println("HEADER HEADER")
 		response += fmt.Sprintf("%v: %v\r\n", header, value)
 	}
 	// End of Headers

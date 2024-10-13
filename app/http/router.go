@@ -28,6 +28,7 @@ func availableRoutes() map[string]string {
 	router["GET+/echo/{message}"] = "EchoController"
 	router["GET+/user-agent"] = "UserAgentController"
 	router["GET+/files/{fileName}"] = "FilesController"
+	router["POST+/files/{fileName}"] = "FileUploaderController"
 
 	return router
 }
@@ -44,6 +45,8 @@ func getRouteAction(controller string) controllers.BaseController {
 		return controllers.UserAgentController{}
 	case "FilesController":
 		return controllers.FilesController{}
+	case "FileUploaderController":
+		return controllers.FileUploaderController{}
 	default:
 		return controllers.NotFoundController{}
 	}
@@ -54,24 +57,30 @@ func getController(r request.Request) (string, request.Request) {
 
 	routerPathCounter := 0
 
+	//fmt.Printf("Current Route: %v %v\n", r.Verb, r.Path)
 	currentRequestPathStructure := strings.Split(r.Path, "/")
 	for route, response := range routeList {
-
-		fmt.Println("------------------")
 		availableRoute := strings.Split(route, "+")
+
+		requestVerb := request.VerbType(availableRoute[0])
+		if requestVerb != r.Verb {
+			continue
+		}
+
 		availablePath := availableRoute[1]
-		//fmt.Printf("Route: %v\n", availablePath)
+		//fmt.Printf("Tested Path: %v\n", availablePath)
 		availablePathStructure := strings.Split(availablePath, "/")
 
 		if len(availablePathStructure) != len(currentRequestPathStructure) {
 			//fmt.Printf("Route '%v' doesnt match %v != %v\n", availablePath, len(availablePathStructure), len(currentRequestPathStructure))
 			continue
 		}
-
+		fmt.Printf("Args count: %v\n", routerPathCounter)
 		for idx, pathItem := range availablePathStructure {
 
 			if pathItem == currentRequestPathStructure[idx] {
 				routerPathCounter++
+				continue
 			}
 
 			fmt.Println(pathItem)
