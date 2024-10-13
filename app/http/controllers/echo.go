@@ -8,5 +8,10 @@ import (
 type EchoController struct{}
 
 func (c EchoController) Handle(req request.Request, response response.Response) string {
+
+	if compression, exists := req.Headers["Accept-Encoding"]; exists {
+		return response.Compress(compression).Success().Build()
+	}
+
 	return response.Text(req.Params["message"]).Success().Build()
 }

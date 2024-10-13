@@ -14,6 +14,28 @@ type Response struct {
 	headers    map[string]string
 }
 
+func New() *Response {
+	return &Response{}
+}
+
+func (res *Response) Compress(compressionType string) *Response {
+	availableCompressionTypes := [...]string{"gzip"}
+
+	res.headers = make(map[string]string)
+	res.headers["Content-Type"] = "text/plain"
+
+	fmt.Println(compressionType, availableCompressionTypes)
+	for _, availableCompressionType := range availableCompressionTypes {
+		if compressionType == availableCompressionType {
+			res.headers["Content-Encoding"] = compressionType
+			break
+		}
+	}
+
+	//res.body = payload
+	return res
+}
+
 func (res *Response) Text(payload string) *Response {
 	res.headers = make(map[string]string)
 	res.headers["Content-Type"] = "text/plain"

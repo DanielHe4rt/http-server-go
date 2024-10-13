@@ -202,3 +202,69 @@ func TestProcessRequestFiles(t *testing.T) {
 		})
 	}
 }
+
+func TestProcessRequestCompression(t *testing.T) {
+	//os.Args = append(os.Args, "--directory")
+	//os.Args = append(os.Args, "/tmp/")
+	//_ = os.WriteFile("/tmp/fodase", []byte(""), 0644)
+	type args struct {
+		r request.Request
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "Compression Headers with Gzip",
+			args: args{
+				r: request.Request{
+					Verb:    "GET",
+					Version: "HTTP/1.1",
+					Path:    "/echo/fodase",
+					Headers: map[string]string{
+						"Accept-Encoding": "gzip",
+					},
+					Params: map[string]string{
+						"message": "fodase",
+					},
+					Body: "",
+				},
+			},
+			want: response.New().Compress("gzip").Success().Build(),
+		},
+		{
+			name: "Unsupported Compression Header",
+			args: args{
+				r: request.Request{
+					Verb:    "GET",
+					Version: "HTTP/1.1",
+					Path:    "/echo/fodase",
+					Headers: map[string]string{
+						"Accept-Encoding": "fodase",
+					},
+					Params: map[string]string{
+						"message": "fodase",
+					},
+					Body: "",
+				},
+			},
+			want: response.New().Compress("fodase").Success().Build(),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.args.r.Verb == request.VerbPost {
+				_, err := os.Stat("/tmp/123")
+
+				if err != nil {
+					t.Errorf("File Not found at /tmp/")
+				}
+			}
+
+			if got := ProcessRequest(tt.args.r); got != tt.want {
+				t.Errorf("ProcessRequest() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
