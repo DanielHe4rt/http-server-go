@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"slices"
 	"strconv"
+	"strings"
 )
 
 type Response struct {
@@ -19,15 +21,19 @@ func New() *Response {
 }
 
 func (res *Response) Compress(compressionType string) *Response {
+
+	requestCompressionsTypes := strings.Split(compressionType, ", ")
+
 	availableCompressionTypes := [...]string{"gzip"}
 
 	res.headers = make(map[string]string)
 	res.headers["Content-Type"] = "text/plain"
 
 	fmt.Println(compressionType, availableCompressionTypes)
+
 	for _, availableCompressionType := range availableCompressionTypes {
-		if compressionType == availableCompressionType {
-			res.headers["Content-Encoding"] = compressionType
+		if slices.Contains(requestCompressionsTypes, availableCompressionType) {
+			res.headers["Content-Encoding"] = availableCompressionType
 			break
 		}
 	}

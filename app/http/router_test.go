@@ -234,6 +234,24 @@ func TestProcessRequestCompression(t *testing.T) {
 			want: response.New().Compress("gzip").Success().Build(),
 		},
 		{
+			name: "Compression Headers with Gzip",
+			args: args{
+				r: request.Request{
+					Verb:    "GET",
+					Version: "HTTP/1.1",
+					Path:    "/echo/fodase",
+					Headers: map[string]string{
+						"Accept-Encoding": "gzip, fodase",
+					},
+					Params: map[string]string{
+						"message": "fodase",
+					},
+					Body: "",
+				},
+			},
+			want: response.New().Compress("gzip, fodase, caguei").Success().Build(),
+		},
+		{
 			name: "Unsupported Compression Header",
 			args: args{
 				r: request.Request{
