@@ -2,6 +2,7 @@ package response
 
 import (
 	"fmt"
+	"github.com/codecrafters-io/http-server-starter-go/app/http/response/compressions"
 	"net/http"
 	"os"
 	"slices"
@@ -20,25 +21,35 @@ func New() *Response {
 	return &Response{}
 }
 
-func (res *Response) Compress(compressionType string) *Response {
+func (res *Response) Compress(compressionType string, payload string) *Response {
 
-	requestCompressionsTypes := strings.Split(compressionType, ", ")
-
-	availableCompressionTypes := [...]string{"gzip"}
+	availableCompressionTypes := []string{"gzip"}
+	requestCompressionsTypes := make([]string, 10)
+	if strings.Contains(compressionType, ", ") {
+		requestCompressionsTypes = strings.Split(compressionType, ", ")
+	} else {
+		requestCompressionsTypes = append(requestCompressionsTypes, compressionType)
+	}
 
 	res.headers = make(map[string]string)
-	res.headers["Content-Type"] = "text/plain"
 
-	fmt.Println(compressionType, availableCompressionTypes)
+	for _, requestCompressionsType := range requestCompressionsTypes {
+		if slices.Contains(availableCompressionTypes, requestCompressionsType) {
+			if requestCompressionsType == "gzip" {
+				compressedPayload, err := compressions.GzipCompression(payload)
+				if err != nil {
+					continue
+				}
 
-	for _, availableCompressionType := range availableCompressionTypes {
-		if slices.Contains(requestCompressionsTypes, availableCompressionType) {
-			res.headers["Content-Encoding"] = availableCompressionType
-			break
+				res.headers["Content-Type"] = "text/plain"
+				res.headers["Content-Encoding"] = requestCompressionsType
+				res.headers["Content-Length"] = strconv.Itoa(len(compressedPayload))
+				res.body = compressedPayload
+				break
+			}
 		}
 	}
 
-	//res.body = payload
 	return res
 }
 

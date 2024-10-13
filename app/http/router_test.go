@@ -231,7 +231,7 @@ func TestProcessRequestCompression(t *testing.T) {
 					Body: "",
 				},
 			},
-			want: response.New().Compress("gzip").Success().Build(),
+			want: response.New().Compress("gzip", "fodase").Success().Build(),
 		},
 		{
 			name: "Compression Headers with Gzip",
@@ -249,7 +249,7 @@ func TestProcessRequestCompression(t *testing.T) {
 					Body: "",
 				},
 			},
-			want: response.New().Compress("gzip, fodase, caguei").Success().Build(),
+			want: response.New().Compress("gzip, fodase, caguei", "fodase").Success().Build(),
 		},
 		{
 			name: "Unsupported Compression Header",
@@ -267,7 +267,7 @@ func TestProcessRequestCompression(t *testing.T) {
 					Body: "",
 				},
 			},
-			want: response.New().Compress("fodase").Success().Build(),
+			want: response.New().Compress("fodase", "fodase").Success().Build(),
 		},
 	}
 	for _, tt := range tests {
